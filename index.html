@@ -23,6 +23,70 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    #movieList {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.movie-card {
+  width: 250px;
+  height: 100%;
+  background-color: #000000;
+  border-radius: 5px;
+  overflow: hidden;
+  padding: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.movie-card img {
+  width: 100%;
+  height: 60%;
+  object-fit: cover;
+  border-bottom: 2px solid #ddd;
+}
+
+.movie-card .title-wrapper {
+  padding: 10px;
+  text-align: center;
+}
+
+.popup {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8); /* Adjust transparency and color as needed */
+  z-index: 999;
+  overflow-y: auto;
+}
+
+.popup-content {
+  position: relative;
+  margin: 10vh auto;
+  background-color: #000000;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 80%;
+  max-height: 80%;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 20px;
+  color: #fff;
+}
+
+  </style>
 </head>
 
 <body id="top">
@@ -165,6 +229,7 @@
             <h1 class="h1 hero-title">
               Trending <strong>Movie</strong>,<strong>Anime</strong>,web-series,much more...
             </h1>
+            <h2 style="color: #ddd;">NOTE : Free access to open-source movies for educational purposes, not endorsing piracy.</h2>
 
             <div class="meta-wrapper">
 
@@ -198,19 +263,109 @@
 
             </div>
 
-            <button class="btn btn-primary">
+            <a href="#movie"><button class="btn btn-primary">
               <ion-icon name="play"></ion-icon>
 
-              <span>Watch now</span>
-            </button>
+              <span>Get Start</span>
+            </button></a>
 
           </div>
 
         </div>
       </section>
 
+<section id="movie">
+  <div class="title-wrapper">
+    <p class="section-subtitle">Online Download The Movies</p>
+
+    <h2 class="h2 section-title">Trending Movies</h2>
+  </div>
+
+  <div id="movieList" class="movie-list" onclick="showPopupDetails()"></div><br>
+</section>
 
 
+<!-- Popup section -->
+<section class="popup" id="popupMovie">
+  <div class="popup-content">
+    <span class="close" onclick="hideMovieDetails()">&times;</span>
+    <section class="movie-detail" >
+      <div class="container">
+    
+        <figure class="movie-detail-banner">
+    
+          <img id="popup_movie_image" src="" alt=" movie poster">
+    
+        </figure>
+    
+        <div class="movie-detail-content">
+    
+          <p class="detail-subtitle">New Movie</p>
+    
+          <h1 id="popup_movie_name" class="h1 detail-title">
+            
+          </h1>
+    
+          <div class="meta-wrapper">
+    
+            <div class="badge-wrapper">
+    
+              <div class="badge badge-outline">HD</div>
+            </div>
+    
+            <div class="ganre-wrapper">
+              <a href="#">Comedy,</a>
+    
+              <a href="#">Action,</a>
+    
+              <a href="#">Adventure,</a>
+    
+              <a href="#">Science Fiction</a>
+            </div>
+    
+            <div class="date-time">
+    
+              <div>
+                <ion-icon name="calendar-outline"></ion-icon>
+    
+                <time datetime="2021">2021</time>
+              </div>
+    
+              <div>
+                <ion-icon name="time-outline"></ion-icon>
+    
+                <time datetime="PT115M">115 min</time>
+              </div>
+    
+            </div>
+    
+          </div>
+    
+          <p id="popup_movie_description" class="storyline"> </p>
+    
+        
+    
+            <button id="popup_movie_TrailerLink" class="btn btn-primary">
+              <ion-icon name="play"></ion-icon>
+    
+              <span>Watch Trailor Now</span>
+            </button>
+    
+    
+          </div>
+    <br>
+          <a id="popup_movie_download" href=" " class="download-btn">
+            <span>Download</span>
+    
+            <ion-icon name="download-outline"></ion-icon>
+          </a>
+    
+        </div>
+    
+      </div>
+    </section>
+  </div>
+</section>
 
 
       <!-- 
@@ -247,6 +402,7 @@
           </div>
 
           <ul class="movies-list  has-scrollbar">
+            
 
             <li>
               <div class="movie-card">
@@ -1144,10 +1300,138 @@
 
 
 
-  <!-- 
-    - custom js link
-  -->
-  <script src="./assets/js/script.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-storage.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.14.1/firebase-database.js"></script>
+
+  <!-- <script src="./assets/js/script.js"></script> -->
+  <script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBqoIMfnffBzB_vm8vlazBlprU1Vdph5vs",
+  authDomain: "music-8af6d.firebaseapp.com",
+  databaseURL: "https://music-8af6d-default-rtdb.firebaseio.com",
+  projectId: "music-8af6d",
+  storageBucket: "music-8af6d.appspot.com",
+  messagingSenderId: "629360725240",
+  appId: "1:629360725240:web:9340450f038bbf146dff0d",
+  measurementId: "G-47V0K2YNLP"
+};
+
+    // Reference to the Firebase Realtime Database
+    const firebaseApp = firebase.initializeApp(firebaseConfig);
+  const db = firebaseApp.database();
+
+  // Fetch movie data from Firebase
+  const moviesRef = db.ref('movies');
+
+  moviesRef.once('value')
+    .then((snapshot) => {
+      const movieList = snapshot.val();
+      displayMovieList(movieList);
+    })
+    .catch((error) => {
+      console.error('Error fetching movies:', error);
+    });
+
+    function displayMovieList(movieList) {
+  const movieListDiv = document.getElementById('movieList');
+  movieListDiv.innerHTML = '';
+
+  Object.keys(movieList).forEach((key) => {
+    const movie = movieList[key];
+    const movieCard = document.createElement('div');
+    movieCard.classList.add('movie-card');
+
+    movieCard.innerHTML = `
+    <div class="movie-card" onclick="showPopupDetails('${key}')">
+      
+        <figure class="card-banner">
+          <img src="${movie.imageUrl}" alt="${movie.name} movie poster">
+        </figure>
+      
+
+      <div class="title-wrapper">
+       
+          <h3 class="card-title">${movie.name}</h3>
+       
+
+        <time datetime="2022">2022</time>
+      </div>
+
+      <div class="card-meta">
+        <div class="badge badge-outline">HD</div>
+
+        <div class="duration">
+          <ion-icon name="time-outline"></ion-icon>
+          <time datetime="PT${movie.duration}">${movie.duration} min</time>
+        </div>
+
+        <div class="rating">
+          <ion-icon name="star"></ion-icon>
+          <data>${movie.rating}</data>
+        </div>
+      </div>
+      </div>
+    `;
+
+    movieListDiv.appendChild(movieCard);
+  });
+}
+
+
+  function playTrailer(trailerLink) {
+    // Example: Open the trailer link in a new window
+    window.open(trailerLink);
+    // Modify this function to suit your specific video player implementation
+  }
+
+
+
+
+// Function to show movie details in the popup
+function showPopupDetails(movieId) {
+  const movieRef = firebase.database().ref('movies/' + movieId);
+  movieRef.once('value')
+    .then((snapshot) => {
+      const movieData = snapshot.val();
+      if (movieData) {
+        // Update the popup content with movie details
+        document.getElementById('popup_movie_image').src = movieData.imageUrl;
+        document.getElementById('popup_movie_name').textContent = movieData.name;
+        document.getElementById('popup_movie_description').textContent = movieData.description;
+        
+        // Set the href attribute for download link and trailer link
+        document.getElementById('popup_movie_download').href = movieData.downloadLink;
+        document.getElementById('popup_movie_TrailerLink').onclick = function() {
+          window.open(movieData.trailerLink, '_blank'); // Open trailer link in a new tab
+        };
+
+        // Update other movie details accordingly
+        const popup = document.getElementById('popupMovie');
+        popup.style.display = 'block'; // Show the popup
+      } else {
+        console.error('Movie data not found');
+      }
+    })
+    .catch((error) => {
+      console.error('Error fetching movie details:', error);
+    });
+}
+
+// Function to hide the movie details popup
+function hideMovieDetails() {
+  const popup = document.getElementById('popupMovie');
+  popup.style.display = 'none';
+}
+
+// Function to hide the movie details popup
+function hideMovieDetails() {
+  const popup = document.getElementById('popupMovie');
+  popup.style.display = 'none';
+}
+
+
+  </script>
 
   <!-- 
     - ionicon link
